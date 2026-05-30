@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>阴山 · 3D地形沉浸体验</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { margin: 0; overflow: hidden; font-family: '楷体', 'Microsoft YaHei', sans-serif; }
+        .top, footer { display: none; }
+        nav {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background-color: rgba(140, 92, 43, 0.85);
+            backdrop-filter: blur(8px);
+            width: auto;
+            margin: 0 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .wrapper { width: auto; margin: 0 auto; max-width: 1200px; }
+        nav ul { justify-content: center; }
+        .controls-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(30, 20, 10, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 12px 16px;
+            color: #ffdf8e;
+            font-size: 14px;
+            z-index: 200;
+            border: 1px solid #c09650;
+            min-width: 180px;
+        }
+        .controls-panel button {
+            background: #8c5c2b;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            margin: 4px 0;
+            border-radius: 20px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .controls-panel button:hover { background: #b8864b; }
+        .controls-panel input { width: 100%; cursor: pointer; }
+        .controls-panel .title { font-weight: bold; border-bottom: 1px solid #c09650; margin-bottom: 8px; text-align: center; }
+        .compass {
+            position: absolute;
+            top: 100px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            z-index: 200;
+            backdrop-filter: blur(4px);
+            border: 1px solid #c09650;
+            color: #ffdf8e;
+            pointer-events: none;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background: #fef3e0;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 90%;
+            padding: 20px;
+            border-left: 8px solid #8c5c2b;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            font-family: '楷体', serif;
+            animation: fadeInUp 0.3s ease;
+        }
+        .modal-content h3 {
+            color: #5a3a1b;
+            font-size: 28px;
+            margin-top: 0;
+            border-bottom: 2px solid #c09650;
+            display: inline-block;
+        }
+        .modal-content img {
+            width: 100%;
+            border-radius: 16px;
+            margin: 15px 0;
+            border: 1px solid #c0a16b;
+        }
+        .modal-content p {
+            color: #4a3a28;
+            line-height: 1.5;
+            font-size: 16px;
+        }
+        .modal-content button {
+            background: #8c5c2b;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .close-btn {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #8c5c2b;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .panorama-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1100;
+            background: black;
+        }
+        .close-panorama {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+            z-index: 1110;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        @media (max-width: 700px) {
+            .controls-panel { padding: 8px 12px; min-width: 150px; }
+            .compass { width: 45px; height: 45px; font-size: 22px; top: 80px; }
+            .modal-content h3 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="wrapper">
+        <ul>
+            <li><a href="index.html">首页</a></li>
+            <li><a href="culture.html">文化底蕴</a></li>
+            <li><a href="liu.html">民俗文化</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">阴山地图 ▼</a>
+                <div class="dropdown-content">
+                    <a href="map.html">🗺️ 高德地图</a>
+                    <a href="terrain.html">🏔️ 3D地形体验</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="controls-panel">
+        <div class="title">🗺️ 导览控制</div>
+        <button id="resetViewBtn">🔄 重置视角</button>
+        <button id="autoRotateBtn">🌀 自动旋转 (关)</button>
+        <div><label>⛰️ 地形夸张度</label><input type="range" id="heightScale" min="0.5" max="2.0" step="0.01" value="1.2"></div>
+        <div style="font-size:12px; margin-top:6px; text-align:center;">🖱️ 点击遗址标签 → 进入全景导览</div>
+    </div>
+    <div class="compass" id="compass">⬆️ N</div>
+
+    <div id="siteModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModalBtn">&times;</span>
+            <h3 id="modalTitle">遗址名称</h3>
+            <img id="modalImage" src="" alt="遗址图片">
+            <p id="modalDesc">详细介绍...</p>
+            <button id="exploreBtn">🏛️ 进入虚拟导览（360°全景）</button>
+        </div>
+    </div>
+
+    <div id="panoramaViewer" class="panorama-container">
+        <div class="close-panorama" id="closePanoramaBtn">✕</div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+        // ---------------- 地形场景 (保持不变) ----------------
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a1a3a);
+        scene.fog = new THREE.FogExp2(0x0a1a3a, 0.0006);
+
+        const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(22, 16, 32);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        const labelRenderer = new CSS2DRenderer();
+        labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        labelRenderer.domElement.style.position = 'absolute';
+        labelRenderer.domElement.style.top = '0px';
+        labelRenderer.domElement.style.left = '0px';
+        labelRenderer.domElement.style.pointerEvents = 'auto';
+        document.body.appendChild(labelRenderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.rotateSpeed = 1.0;
+        controls.zoomSpeed = 1.2;
+        controls.panSpeed = 0.8;
+        controls.enableZoom = true;
+        controls.enablePan = true;
+        controls.target.set(0, 2, 0);
+        
+        let autoRotate = false;
+        const autoRotateBtn = document.getElementById('autoRotateBtn');
+        autoRotateBtn.addEventListener('click', () => {
+            autoRotate = !autoRotate;
+            controls.autoRotate = autoRotate;
+            controls.autoRotateSpeed = 1.5;
+            autoRotateBtn.textContent = autoRotate ? '🌀 自动旋转 (开)' : '🌀 自动旋转 (关)';
+        });
+        document.getElementById('resetViewBtn').addEventListener('click', () => {
+            camera.position.set(22, 16, 32);
+            controls.target.set(0, 2, 0);
+            controls.update();
+        });
+
+        let terrainMesh, rockGroup, grassPoints;
+        const heightScaleInput = document.getElementById('heightScale');
+        let currentHeightScale = 1.2;
+
+        function generateTerrain(heightScale) {
+            const width = 65, depth = 55, segments = 140;
+            const geometry = new THREE.PlaneGeometry(width, depth, segments, segments);
+            geometry.rotateX(-Math.PI / 2);
+            const positions = geometry.attributes.position.array;
+            for (let i = 0; i < positions.length; i += 3) {
+                let x = positions[i], z = positions[i+2];
+                let y = 0;
+                y += Math.sin(x * 0.22) * 1.5;
+                y += Math.sin(x * 0.7 + 1.5) * 0.8;
+                y += Math.cos(z * 0.45) * 0.9;
+                y += Math.sin((x * 0.55 + z * 0.5) * 1.3) * 1.0;
+                y += Math.sin(x * 2.0) * 0.25;
+                y += Math.cos(z * 1.8) * 0.25;
+                y += Math.exp(-((x+5)**2 + (z+2)**2)/150) * 1.2;
+                y += Math.exp(-((x-8)**2 + (z-6)**2)/200) * 1.0;
+                const edgeX = 1 - Math.abs(x) / (width/2) * 0.5;
+                const edgeZ = 1 - Math.abs(z) / (depth/2) * 0.5;
+                y = y * Math.min(edgeX, edgeZ);
+                y = Math.max(0.4, y + 0.8);
+                y = y * heightScale;
+                positions[i+1] = y;
+            }
+            geometry.computeVertexNormals();
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024; canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#5c4a32';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < 6000; i++) {
+                ctx.fillStyle = `rgba(80, 60, 35, ${Math.random() * 0.5})`;
+                ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 2, 2);
+            }
+            for (let i = 0; i < 2000; i++) {
+                ctx.fillStyle = `rgba(120, 90, 50, ${Math.random() * 0.6})`;
+                ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 3, 3);
+            }
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(6, 6);
+            const material = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.7, metalness: 0.1, color: 0xccaa88, emissive: 0x331a00 });
+            return new THREE.Mesh(geometry, material);
+        }
+
+        function addRockDetails() {
+            if (rockGroup) scene.remove(rockGroup);
+            const group = new THREE.Group();
+            const rockMat = new THREE.MeshStandardMaterial({ color: 0x7a4a2a, roughness: 0.9 });
+            const positions = terrainMesh.geometry.attributes.position.array;
+            for (let i = 0; i < positions.length; i += 36) {
+                const x = positions[i], z = positions[i+2], y = positions[i+1];
+                if (y < 1.2) continue;
+                const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(0.12), rockMat);
+                rock.position.set(x, y + 0.08, z);
+                rock.scale.setScalar(0.6 + Math.random() * 0.8);
+                rock.castShadow = true;
+                group.add(rock);
+            }
+            scene.add(group);
+            return group;
+        }
+
+        function addGrassPoints() {
+            if (grassPoints) scene.remove(grassPoints);
+            const count = 2500;
+            const positionsArray = [];
+            const terrainPos = terrainMesh.geometry.attributes.position.array;
+            for (let i = 0; i < count; i++) {
+                const x = (Math.random() - 0.5) * 58;
+                const z = (Math.random() - 0.5) * 48;
+                let y = 0;
+                let minDist = 100;
+                for (let j = 0; j < terrainPos.length; j += 3) {
+                    const tx = terrainPos[j], tz = terrainPos[j+2];
+                    const dist = Math.hypot(x - tx, z - tz);
+                    if (dist < minDist) { minDist = dist; y = terrainPos[j+1]; }
+                }
+                if (y < 1.0) continue;
+                positionsArray.push(x, y + 0.05, z);
+            }
+            const grassGeo = new THREE.BufferGeometry();
+            grassGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positionsArray), 3));
+            const grassMat = new THREE.PointsMaterial({ color: 0x7c9a4a, size: 0.08 });
+            return new THREE.Points(grassGeo, grassMat);
+        }
+
+        terrainMesh = generateTerrain(currentHeightScale);
+        scene.add(terrainMesh);
+        rockGroup = addRockDetails();
+        grassPoints = addGrassPoints();
+        scene.add(grassPoints);
+
+        heightScaleInput.addEventListener('input', (e) => {
+            currentHeightScale = parseFloat(e.target.value);
+            const newTerrain = generateTerrain(currentHeightScale);
+            scene.remove(terrainMesh);
+            terrainMesh = newTerrain;
+            scene.add(terrainMesh);
+            const newRocks = addRockDetails();
+            const newGrass = addGrassPoints();
+            scene.remove(rockGroup); scene.remove(grassPoints);
+            rockGroup = newRocks; grassPoints = newGrass;
+            scene.add(grassPoints);
+            document.querySelectorAll('.css2d-object').forEach(el => el.remove());
+            addSiteLabels();
+        });
+
+        const gridHelper = new THREE.GridHelper(100, 20, 0xc09650, 0x8c5c2b);
+        gridHelper.position.y = -0.8;
+        gridHelper.material.transparent = true;
+        gridHelper.material.opacity = 0.3;
+        scene.add(gridHelper);
+
+        const starGeo = new THREE.BufferGeometry();
+        const starPos = [];
+        for (let i = 0; i < 1200; i++) starPos.push((Math.random()-0.5)*500, (Math.random()-0.5)*200+50, (Math.random()-0.5)*300-100);
+        starGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starPos), 3));
+        const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.2, transparent: true, opacity: 0.7 }));
+        scene.add(stars);
+        
+        const cloudCount = 600;
+        const cloudPos = [];
+        for (let i = 0; i < cloudCount; i++) cloudPos.push((Math.random()-0.5)*140, Math.random()*18+8, (Math.random()-0.5)*100);
+        const cloudGeo = new THREE.BufferGeometry();
+        cloudGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(cloudPos), 3));
+        const clouds = new THREE.Points(cloudGeo, new THREE.PointsMaterial({ color: 0xd0dce8, size: 0.35, transparent: true, opacity: 0.5 }));
+        scene.add(clouds);
+
+        const ambientLight = new THREE.AmbientLight(0x404060);
+        scene.add(ambientLight);
+        const mainLight = new THREE.DirectionalLight(0xfff0d0, 1.2);
+        mainLight.position.set(12, 22, 8);
+        mainLight.castShadow = true;
+        scene.add(mainLight);
+        const fillLight = new THREE.PointLight(0xccaa77, 0.5);
+        fillLight.position.set(-5, 8, -10);
+        scene.add(fillLight);
+        const backLight = new THREE.PointLight(0x88aacc, 0.4);
+        backLight.position.set(0, 12, -15);
+        scene.add(backLight);
+        const sunGlow = new THREE.PointLight(0xffaa66, 0.9);
+        sunGlow.position.set(15, 25, -10);
+        scene.add(sunGlow);
+
+        const siteData = [
+            { name: '🏔️ 乌拉特中旗岩画群', x: -13, z: -7, desc: '阴山岩画最密集区域之一，分布大量狩猎、放牧、天体图案，距今千年以上。岩画凿刻在深褐色岩石上，展现了古代游牧民族的信仰与生活。', img: 'images/site3.jpg', pano: 'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg' },
+            { name: '⛰️ 高阙塞遗址', x: 11, z: -6, desc: '赵武灵王修筑的阴山长城重要关隘，汉代卫青曾出塞于此。遗址现存石砌城墙和烽火台，俯瞰草原。', img: 'images/site6.jpg', pano: 'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg' },
+            { name: '🏛️ 鸡鹿塞', x: 16, z: 8, desc: '汉代通往塞北的著名关塞，昭君出塞曾途经此地。位于阴山南麓，是丝路北道的重要节点。', img: 'images/site5.jpg', pano: 'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg' },
+            { name: '🪨 阴山主峰', x: -5, z: -16, desc: '阴山山脉最高峰，海拔2364米，山势险峻，山顶常有云雾缭绕，是俯瞰周边草原的绝佳地点。', img: 'images/site2.jpg', pano: 'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg' },
+            { name: '📜 赵长城遗址', x: 6, z: 13, desc: '战国赵武灵王沿阴山修筑的早期长城，土石结构依稀可见。是中国最古老的长城段之一。', img: 'images/site4.jpg', pano: 'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg' },
+            { name: '🐫 草原丝路', x: -9, z: 15, desc: '北魏至元代草原丝绸之路的重要通道，连接漠北与中原。沿途曾发现古代钱币、陶器等文物。', img: 'images/site1.jpg', pano: 'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg' }
+        ];
+
+        function addSiteLabels() {
+            siteData.forEach(site => {
+                const div = document.createElement('div');
+                div.textContent = site.name;
+                div.style.color = '#ffdf8e';
+                div.style.fontSize = '18px';
+                div.style.fontWeight = 'bold';
+                div.style.textShadow = '1px 1px 0 #3a2a1a';
+                div.style.background = 'rgba(0,0,0,0.65)';
+                div.style.padding = '6px 14px';
+                div.style.borderRadius = '40px';
+                div.style.borderLeft = '3px solid #c09650';
+                div.style.fontFamily = '楷体, "Microsoft YaHei", serif';
+                div.style.backdropFilter = 'blur(4px)';
+                div.style.whiteSpace = 'nowrap';
+                div.style.cursor = 'pointer';
+                div.style.transition = '0.2s';
+                div.addEventListener('mouseenter', () => div.style.transform = 'scale(1.05)');
+                div.addEventListener('mouseleave', () => div.style.transform = 'scale(1)');
+                div.addEventListener('click', () => {
+                    document.getElementById('modalTitle').innerHTML = site.name;
+                    document.getElementById('modalDesc').innerHTML = site.desc;
+                    document.getElementById('modalImage').src = site.img;
+                    document.getElementById('exploreBtn').setAttribute('data-pano', site.pano);
+                    document.getElementById('siteModal').style.display = 'flex';
+                });
+                const label = new CSS2DObject(div);
+                let y = 0;
+                const terrainPos = terrainMesh.geometry.attributes.position.array;
+                let minDist = 100;
+                for (let i = 0; i < terrainPos.length; i += 3) {
+                    const tx = terrainPos[i], tz = terrainPos[i+2];
+                    const dist = Math.hypot(site.x - tx, site.z - tz);
+                    if (dist < minDist) { minDist = dist; y = terrainPos[i+1]; }
+                }
+                label.position.set(site.x, y + 1.8, site.z);
+                scene.add(label);
+            });
+        }
+
+        addSiteLabels();
+
+        // ========== 全景查看器（鼠标拖拽旋转，完美可控） ==========
+        let panoramaActive = false;
+        let panoramaRenderer, panoramaScene, panoramaCamera, panoramaSphere;
+        let isDragging = false;
+        let lastMouseX = 0, lastMouseY = 0;
+        let panRotation = { yaw: 0, pitch: 0 }; // 弧度
+
+        const panoramaContainer = document.getElementById('panoramaViewer');
+        const closePanoramaBtn = document.getElementById('closePanoramaBtn');
+        const exploreBtn = document.getElementById('exploreBtn');
+
+        function initPanorama(panoImageUrl) {
+            if (panoramaRenderer) {
+                // 更新纹理
+                new THREE.TextureLoader().load(panoImageUrl, (texture) => {
+                    panoramaSphere.material.map = texture;
+                    panoramaSphere.material.needsUpdate = true;
+                });
+                panoramaContainer.style.display = 'block';
+                panoramaActive = true;
+                // 重置视角方向
+                panRotation = { yaw: 0, pitch: 0 };
+                updateCameraDirection();
+                return;
+            }
+            // 首次创建
+            panoramaScene = new THREE.Scene();
+            panoramaCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            panoramaCamera.position.set(0, 0, 0);
+            const geometry = new THREE.SphereGeometry(500, 64, 64);
+            const texture = new THREE.TextureLoader().load(panoImageUrl);
+            const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide });
+            panoramaSphere = new THREE.Mesh(geometry, material);
+            panoramaScene.add(panoramaSphere);
+            
+            panoramaRenderer = new THREE.WebGLRenderer({ antialias: true });
+            panoramaRenderer.setSize(window.innerWidth, window.innerHeight);
+            panoramaContainer.appendChild(panoramaRenderer.domElement);
+            
+            // 鼠标拖拽事件
+            panoramaRenderer.domElement.addEventListener('mousedown', onPanoramaMouseDown);
+            window.addEventListener('mousemove', onPanoramaMouseMove);
+            window.addEventListener('mouseup', onPanoramaMouseUp);
+            // 触摸屏支持
+            panoramaRenderer.domElement.addEventListener('touchstart', onPanoramaTouchStart);
+            window.addEventListener('touchmove', onPanoramaTouchMove);
+            window.addEventListener('touchend', onPanoramaTouchEnd);
+            
+            function updateCameraDirection() {
+                const euler = new THREE.Euler(panRotation.pitch, panRotation.yaw, 0, 'YXZ');
+                panoramaCamera.quaternion.setFromEuler(euler);
+            }
+            
+            function onPanoramaMouseDown(e) {
+                isDragging = true;
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+                panoramaRenderer.domElement.style.cursor = 'grabbing';
+            }
+            function onPanoramaMouseMove(e) {
+                if (!isDragging || !panoramaActive) return;
+                const dx = e.clientX - lastMouseX;
+                const dy = e.clientY - lastMouseY;
+                if (dx !== 0) panRotation.yaw += dx * 0.005;
+                if (dy !== 0) panRotation.pitch += dy * 0.005;
+                // 限制俯仰角范围（避免看到背面翻转）
+                panRotation.pitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, panRotation.pitch));
+                updateCameraDirection();
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+            }
+            function onPanoramaMouseUp() {
+                isDragging = false;
+                if (panoramaRenderer) panoramaRenderer.domElement.style.cursor = 'grab';
+            }
+            function onPanoramaTouchStart(e) {
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    lastMouseX = e.touches[0].clientX;
+                    lastMouseY = e.touches[0].clientY;
+                }
+            }
+            function onPanoramaTouchMove(e) {
+                if (!isDragging || !panoramaActive) return;
+                const dx = e.touches[0].clientX - lastMouseX;
+                const dy = e.touches[0].clientY - lastMouseY;
+                if (dx !== 0) panRotation.yaw += dx * 0.005;
+                if (dy !== 0) panRotation.pitch += dy * 0.005;
+                panRotation.pitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, panRotation.pitch));
+                updateCameraDirection();
+                lastMouseX = e.touches[0].clientX;
+                lastMouseY = e.touches[0].clientY;
+            }
+            function onPanoramaTouchEnd() {
+                isDragging = false;
+            }
+            
+            function animatePanorama() {
+                if (!panoramaActive) return;
+                requestAnimationFrame(animatePanorama);
+                panoramaRenderer.render(panoramaScene, panoramaCamera);
+            }
+            animatePanorama();
+            panoramaContainer.style.display = 'block';
+            panoramaActive = true;
+            panoramaRenderer.domElement.style.cursor = 'grab';
+        }
+
+        function closePanorama() {
+            panoramaContainer.style.display = 'none';
+            panoramaActive = false;
+            isDragging = false;
+        }
+
+        exploreBtn.addEventListener('click', () => {
+            const panoUrl = exploreBtn.getAttribute('data-pano');
+            if (panoUrl) {
+                initPanorama(panoUrl);
+                document.getElementById('siteModal').style.display = 'none';
+            } else {
+                alert('该遗址暂无全景导览');
+            }
+        });
+        closePanoramaBtn.addEventListener('click', closePanorama);
+
+        // 弹窗关闭
+        const modal = document.getElementById('siteModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        closeModalBtn.onclick = () => modal.style.display = 'none';
+        window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+
+        // 主场景动画
+        let time = 0;
+        function animateMain() {
+            requestAnimationFrame(animateMain);
+            time += 0.003;
+            clouds.rotation.y += 0.0005;
+            stars.rotation.y -= 0.0002;
+            stars.rotation.x += 0.0001;
+            sunGlow.position.x = 15 + Math.sin(time) * 2;
+            const dir = camera.getWorldDirection(new THREE.Vector3());
+            const angle = Math.atan2(dir.x, dir.z) * 180 / Math.PI;
+            const compassElem = document.getElementById('compass');
+            let dirText = '⬆️ N';
+            if (angle > 45 && angle < 135) dirText = '➡️ E';
+            else if (angle < -45 && angle > -135) dirText = '⬅️ W';
+            else if (Math.abs(angle) > 135) dirText = '⬇️ S';
+            compassElem.innerHTML = dirText;
+            controls.update();
+            renderer.render(scene, camera);
+            labelRenderer.render(scene, camera);
+        }
+        animateMain();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+            if (panoramaActive && panoramaRenderer) {
+                panoramaCamera.aspect = window.innerWidth / window.innerHeight;
+                panoramaCamera.updateProjectionMatrix();
+                panoramaRenderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
+    </script>
+</body>
+</html>
