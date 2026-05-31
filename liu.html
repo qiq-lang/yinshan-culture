@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阴山文化 · 民俗文化</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* 游戏附加样式（不冲突原有样式） */
+        .game-wrapper {
+            margin: 40px auto 30px;
+        }
+        .game-card {
+            background: rgba(254, 243, 224, 0.95);
+            border-radius: 28px;
+            padding: 24px 28px;
+            border-left: 6px solid #8c5c2b;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            font-family: '楷体', 'Segoe UI', serif;
+        }
+        .game-card h3 {
+            font-size: 28px;
+            color: #5a3a1b;
+            border-bottom: 2px dashed #c09650;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .game-desc {
+            color: #6b4e2a;
+            margin-bottom: 20px;
+        }
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fef7e8;
+            padding: 10px 18px;
+            border-radius: 40px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .game-stats span {
+            font-size: 16px;
+            font-weight: bold;
+            color: #5a3a1b;
+        }
+        .game-stats button {
+            background: #8c5c2b;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        .game-stats button:hover {
+            background: #b27a40;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            justify-items: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .card {
+            background: #fef3e0;
+            border: 2px solid #d0b080;
+            border-radius: 20px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            font-size: 28px;
+            font-weight: bold;
+            color: #8c5c2b;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .card:hover {
+            transform: scale(0.97);
+            background: #fff3e0;
+        }
+        .card.matched {
+            background: #cde0c5;
+            border-color: #6a8e5a;
+            cursor: default;
+            transform: none;
+            opacity: 0.8;
+        }
+        .card.flipped {
+            background: #f0e0c0;
+            border-color: #c09650;
+        }
+        #game-message {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #8c5c2b;
+        }
+        @media (max-width: 700px) {
+            .game-board {
+                gap: 8px;
+            }
+            .card {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部区域 -->
+    <div class="top wrapper">
+        <a href="index.html">
+            <img src="images/logo.png" alt="阴山文化logo">
+        </a>
+        <div class="search">
+            <input type="text" placeholder="请输入你想搜索的内容">
+            <button>搜索</button>
+        </div>
+    </div>
+    
+    <!-- 导航菜单 -->
+    <nav class="wrapper">
+        <ul>
+            <li><a href="index.html">首页</a></li>
+            <li><a href="culture.html">文化底蕴</a></li>
+            <li><a href="liu.html">民俗文化</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">阴山地图 ▼</a>
+                <div class="dropdown-content">
+                    <a href="map.html">🗺️ 高德地图</a>
+                    <a href="terrain.html">🏔️ 3D地形体验</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- 轮播图 -->
+    <div class="banner">
+        <section>
+            <ul> 
+                <li><img src="images/banner1.jpg" alt="阴山山脉风光"></li>
+                <li><img src="images/banner2.png" alt="阴山岩画鹿群"></li>
+                <li><img src="images/banner3.png" alt="阴山岩画狩猎场景"></li>
+                <li><img src="images/banner4.png" alt="阴山文化遗址"></li>
+            </ul>
+        </section>
+    </div>
+    
+    <h3 class="title wrapper">阴山民俗文化 · 信仰与礼俗</h3>
+    
+    <div class="pais wrapper">
+        <!-- 祭敖包 -->
+        <div class="pai">
+            <div class="pic">
+                <img src="images/aobao1.jpg" alt="祭敖包">
+            </div>
+            <div class="pai-name">🏔️ 祭敖包</div>
+            <div class="pai-text">
+                敖包是蒙古族传统祭祀圣地，由石块堆砌成圆锥形。祭敖包在每年春夏之交举行，人们献上哈达、奶食、酒，绕行三圈祈求风调雨顺、人畜平安。祭祀后伴有歌舞，是阴山地区最重要的集体信仰仪式。
+            </div>
+        </div>
+        <!-- 蒙古族婚礼 -->
+        <div class="pai">
+            <div class="pic">
+                <img src="images/hunli3.jpg" alt="蒙古族婚礼">
+            </div>
+            <div class="pai-name">💍 蒙古族婚礼</div>
+            <div class="pai-text">
+                阴山地区传统婚礼仪式繁复热烈，包括提亲、定亲、聘礼、迎亲、拜火、敬酒、回门等。新娘穿戴珊瑚头饰与长袍，新郎骑马迎亲。全程伴有祝颂词、民歌与奶酒，体现草原民族的生命礼俗。
+            </div>
+        </div>
+        <!-- 奶食文化 -->
+        <div class="pai">
+            <div class="pic">
+                <img src="images/naipizi2.jpg" alt="奶食">
+            </div>
+            <div class="pai-name">🍶 奶食文化</div>
+            <div class="pai-text">
+                蒙古族以奶制品为日常饮食核心，包括鲜奶、酸奶、奶豆腐、奶酪、奶皮子、黄油。白色被视为吉祥色。在阴山地区，奶食不仅是食物，更是待客、祭祀、婚礼中不可或缺的礼仪象征。
+            </div>
+        </div>
+        <!-- 驼文化 -->
+        <div class="pai">
+            <div class="pic">
+                <img src="images/tuowenhua4.jpg" alt="骆驼">
+            </div>
+            <div class="pai-name">🐫 驼文化</div>
+            <div class="pai-text">
+                阴山以北的戈壁草原，骆驼是传统交通工具与生活依赖。驼毛擀毡、驼奶酿酒等技艺代代相传。冬季举行骆驼赛跑、驼球比赛。驼文化是阴山地区独具特色的生产生活习俗遗产。
+            </div>
+        </div>
+        <!-- 祭火节 -->
+        <div class="pai">
+            <div class="pic">
+                <img src="images/jihuojie5.jpg" alt="祭火">
+            </div>
+            <div class="pai-name">🔥 祭火节</div>
+            <div class="pai-text">
+                农历腊月二十三或二十四，蒙古族举行祭火仪式，祭祀火神。清理灶台，点燃新火，供奉羊胸骨、奶食、绸缎等。火被视为纯洁与兴旺的象征，祭火祈求家庭平安、牲畜兴旺，是阴山地区冬季最重要的家庭祭祀。
+            </div>
+        </div>
+        <!-- 敬酒礼仪 -->
+        <div class="pai">
+            <div class="pic">
+                <img src="images/jingjiu6.jpg" alt="敬酒">
+            </div>
+            <div class="pai-name">🍷 敬酒礼仪</div>
+            <div class="pai-text">
+                蒙古族敬酒是待客最高礼遇。主人双手捧起银碗或木碗盛满马奶酒或白酒，客人应以右手无名指蘸酒弹向天、地、火神（或祖先），然后饮用。敬酒时伴有祝酒歌，体现草原民族的热情与尊崇。
+            </div>
+        </div>
+    </div>
+
+    <!-- ========= 阴山民俗记忆翻牌游戏 ========= -->
+    <div class="game-wrapper wrapper">
+        <div class="game-card">
+            <h3>🎴 阴山民俗 · 记忆翻牌配对</h3>
+            <p class="game-desc">点击卡片配对民俗项目与对应图标，挑战你的记忆力！</p>
+            <div class="game-stats">
+                <span>⏱️ 用时: <span id="timer">0</span> 秒</span>
+                <span>🎯 尝试次数: <span id="attempts">0</span></span>
+                <button id="resetGameBtn">🔄 重新洗牌</button>
+            </div>
+            <div id="game-board" class="game-board"></div>
+            <div id="game-message"></div>
+        </div>
+    </div>
+
+    <footer class="wrapper">
+        阴山文化 · 守望文明交融
+    </footer>
+    
+    <script src="./js/js01.js"></script>
+    <script>
+        // 民俗配对数据：[民俗名称, 对应图标]
+        const pairsData = [
+            ["祭敖包", "🏔️"],
+            ["蒙古族婚礼", "💍"],
+            ["奶食文化", "🍶"],
+            ["驼文化", "🐫"],
+            ["祭火节", "🔥"],
+            ["敬酒礼仪", "🍷"]
+        ];
+
+        let cards = [];
+        let flippedCards = [];
+        let lockBoard = false;
+        let attempts = 0;
+        let timerSeconds = 0;
+        let timerInterval = null;
+        let gameCompleted = false;
+
+        const board = document.getElementById('game-board');
+        const attemptsSpan = document.getElementById('attempts');
+        const timerSpan = document.getElementById('timer');
+        const resetBtn = document.getElementById('resetGameBtn');
+        const messageDiv = document.getElementById('game-message');
+
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function initCards() {
+            let newCards = [];
+            pairsData.forEach((pair, idx) => {
+                newCards.push({ text: pair[0], icon: pair[1], matched: false, id: idx });
+                newCards.push({ text: pair[0], icon: pair[1], matched: false, id: idx });
+            });
+            newCards = shuffleArray(newCards);
+            newCards = newCards.map((card, idx) => ({ ...card, cardIndex: idx }));
+            return newCards;
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function startTimer() {
+            if (timerInterval) stopTimer();
+            timerInterval = setInterval(() => {
+                if (!gameCompleted && !lockBoard) {
+                    timerSeconds++;
+                    timerSpan.textContent = timerSeconds;
+                }
+            }, 1000);
+        }
+
+        function resetGame() {
+            stopTimer();
+            cards = initCards();
+            flippedCards = [];
+            lockBoard = false;
+            attempts = 0;
+            timerSeconds = 0;
+            gameCompleted = false;
+            attemptsSpan.textContent = attempts;
+            timerSpan.textContent = timerSeconds;
+            messageDiv.innerHTML = '';
+            renderBoard();
+            startTimer();
+        }
+
+        function checkMatch() {
+            const [cardA, cardB] = flippedCards;
+            const isMatch = (cardA.id === cardB.id);
+            if (isMatch) {
+                cardA.matched = true;
+                cardB.matched = true;
+                // 更新DOM样式
+                const elements = document.querySelectorAll('.card');
+                elements.forEach(el => {
+                    const idx = parseInt(el.dataset.index);
+                    if (cards[idx].matched) {
+                        el.classList.add('matched');
+                        el.classList.remove('flipped');
+                        el.innerHTML = `<span>${cards[idx].icon}</span><span style="font-size:12px; margin-left:4px;">${cards[idx].text}</span>`;
+                    }
+                });
+                flippedCards = [];
+                const allMatched = cards.every(card => card.matched === true);
+                if (allMatched) {
+                    gameCompleted = true;
+                    stopTimer();
+                    messageDiv.innerHTML = `<div style="background:#e0f0e0; padding:10px; border-radius:40px;">🎉 恭喜！你完成了所有配对！ 用时 ${timerSeconds} 秒，尝试次数 ${attempts}。 🎉</div>`;
+                }
+            } else {
+                lockBoard = true;
+                setTimeout(() => {
+                    const elements = document.querySelectorAll('.card');
+                    elements.forEach(el => {
+                        const idx = parseInt(el.dataset.index);
+                        if (!cards[idx].matched && el.classList.contains('flipped')) {
+                            el.classList.remove('flipped');
+                            el.innerHTML = '❓';
+                        }
+                    });
+                    flippedCards = [];
+                    lockBoard = false;
+                }, 800);
+            }
+        }
+
+        function handleCardClick(index) {
+            if (lockBoard) return;
+            if (gameCompleted) return;
+            const card = cards[index];
+            if (card.matched) return;
+            if (flippedCards.includes(card)) return;
+            if (flippedCards.length === 2) return;
+
+            const cardElement = document.querySelector(`.card[data-index='${index}']`);
+            cardElement.classList.add('flipped');
+            cardElement.innerHTML = `<span>${card.icon}</span><span style="font-size:12px; margin-left:4px;">${card.text}</span>`;
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                attempts++;
+                attemptsSpan.textContent = attempts;
+                checkMatch();
+            }
+        }
+
+        function renderBoard() {
+            board.innerHTML = '';
+            cards.forEach((card, idx) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'card';
+                if (card.matched) {
+                    cardDiv.classList.add('matched');
+                    cardDiv.innerHTML = `<span>${card.icon}</span><span style="font-size:12px; margin-left:4px;">${card.text}</span>`;
+                } else {
+                    cardDiv.innerHTML = '❓';
+                }
+                cardDiv.setAttribute('data-index', idx);
+                cardDiv.addEventListener('click', () => handleCardClick(idx));
+                board.appendChild(cardDiv);
+            });
+        }
+
+        resetGame();
+        resetBtn.addEventListener('click', resetGame);
+    </script>
+</body>
+</html>
