@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阴山文化 · 文明走廊</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ========== 全局历史感背景 ========== */
+        body {
+            background-color: #fcf8e8;
+            background-image: radial-gradient(circle at 10% 20%, rgba(150, 110, 70, 0.08) 2px, transparent 2px),
+                              repeating-linear-gradient(45deg, rgba(100, 70, 40, 0.02) 0px, rgba(100, 70, 40, 0.02) 2px, transparent 2px, transparent 8px);
+            background-size: 28px 28px, 16px 16px;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" opacity="0.1"><path fill="%237a5a3a" d="M0,300 L100,240 L200,260 L300,180 L400,210 L500,140 L600,170 L700,110 L800,140 L900,80 L1000,120 L1100,60 L1200,100 L1200,300 Z"/></svg>') no-repeat bottom center;
+            background-size: 100% auto;
+            pointer-events: none;
+            z-index: 0;
+        }
+        /* 数字人：无边框，尺寸缩小 */
+        .digital-human {
+            position: fixed;
+            bottom: 40px;
+            left: 20px;
+            z-index: 300;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .digital-human:hover {
+            transform: scale(1.02);
+        }
+        .avatar {
+            width: 180px;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.2));
+        }
+        .avatar img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 0;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+        .speech-bubble {
+            position: absolute;
+            bottom: 220px;
+            left: 20px;
+            background: #fffef5;
+            border: 2px solid #c09650;
+            border-radius: 24px 24px 8px 24px;
+            padding: 12px 20px;
+            max-width: 280px;
+            font-family: '楷体', 'Segoe UI', serif;
+            font-size: 16px;
+            color: #4a2e1a;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            backdrop-filter: blur(4px);
+            z-index: 310;
+            display: none;
+            animation: fadeInUp 0.2s ease;
+        }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 20px;
+            border-width: 12px 10px 0 10px;
+            border-style: solid;
+            border-color: #c09650 transparent transparent transparent;
+        }
+        .speech-bubble .close-bubble {
+            float: right;
+            font-size: 18px;
+            font-weight: bold;
+            margin-left: 12px;
+            cursor: pointer;
+            color: #8c5c2b;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .lang-switch {
+            margin-left: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .lang-btn {
+            background: transparent;
+            border: 1px solid #c09650;
+            padding: 4px 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            color: #8c5c2b;
+            transition: 0.2s;
+        }
+        .lang-btn.active {
+            background: #8c5c2b;
+            color: white;
+            border-color: #8c5c2b;
+        }
+        .lang-btn:hover {
+            background: #c09650;
+            color: white;
+        }
+        .ai-answer-box {
+            width: 1000px;
+            margin: 10px auto;
+            background: #fef3e0;
+            border-left: 4px solid #8c5c2b;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-family: '楷体', 'Segoe UI', serif;
+            color: #4a2e1a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: none;
+            transition: opacity 0.3s;
+        }
+        /* 原有全局样式 */
+        * {
+            padding: 0;
+            margin: 0;
+            text-decoration: none;
+            list-style: none;
+            box-sizing: border-box;
+        }
+        .wrapper {
+            width: 1000px;
+            margin: 0 auto;
+        }
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .top img {
+            width: 180px;
+            height: 80px;
+        }
+        .search {
+            display: flex;
+            align-items: center;
+            border: #c09650 2px solid;
+        }
+        .search input {
+            padding: 8px;
+            border: none;
+            outline: none;
+            flex: 1;
+        }
+        .search button {
+            padding: 7px 16px;
+            border: none;
+            background-color: #c09650;
+            color: #fff;
+            cursor: pointer;
+        }
+        nav {
+            border-radius: 4px;
+            background-color: #8c5c2b;
+            padding: 10px 8px;
+            display: flex;
+            justify-content: space-around;
+        }
+        nav a {
+            color: #fff;
+            font-family: 楷体;
+            letter-spacing: 4px;
+            font-size: 24px;
+        }
+        nav a:hover {
+            color: #ffdf8e;
+        }
+        .banner {
+            width: 1300px;
+            height: 400px;
+            margin: 30px auto;
+        }
+        .banner section {
+            width: 1300px;
+            height: 400px;
+            margin: 0 auto;
+        }
+        .banner section>ul {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 4000px;
+        }
+        .banner section>ul>li {
+            width: 560px;
+            height: 360px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -300px;
+            margin-top: -180px;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.5s linear;
+            cursor: pointer;
+        }
+        .banner section>ul>li>img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+        .title {
+            text-align: center;
+            font-family: 楷体;
+            letter-spacing: 8px;
+            font-size: 24px;
+            line-height: 33px;
+            color: #fff;
+            background-color: #8c5c2b;
+            padding: 8px 8px 8px 18px;
+            border-radius: 4px 20px 4px 20px;
+        }
+        .info {
+            margin: 25px auto;
+            display: flex;
+            justify-content: space-between;
+        }
+        .info .text {
+            width: 75%;
+        }
+        .info .text p {
+            margin-bottom: 10px;
+            text-indent: 2em;
+            line-height: 28px;
+            font-size: 18px;
+            color: #5a3a1b;
+        }
+        .info img {
+            width: 20%;
+        }
+        .hero {
+            text-align: center;
+            margin: 40px auto 60px;
+            position: relative;
+            background: #fcf8f0;
+            border-top: 2px solid #c09650;
+            border-bottom: 2px solid #c09650;
+            padding: 30px 20px 50px;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.03), 0 8px 20px rgba(0,0,0,0.05);
+        }
+        .hero h1 {
+            font-size: 38px;
+            letter-spacing: 8px;
+            color: #4a2c14;
+            font-family: 'Times New Roman', 楷体, '华文楷书', serif;
+            text-shadow: 2px 2px 0 rgba(160, 110, 60, 0.15);
+            margin-bottom: 15px;
+            display: inline-block;
+            padding: 0 20px;
+            background: rgba(252, 245, 235, 0.7);
+            border-radius: 60px;
+        }
+        .hero .subtitle {
+            font-size: 18px;
+            color: #8c5c2b;
+            letter-spacing: 6px;
+            font-family: 'Courier New', monospace;
+            border-top: 1px dashed #d0b080;
+            border-bottom: 1px dashed #d0b080;
+            display: inline-block;
+            padding: 6px 24px;
+            background: rgba(255, 248, 235, 0.6);
+        }
+        .guide-cards {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            margin-top: 60px;
+        }
+        .guide-card {
+            background: #fef3e0;
+            width: 240px;
+            padding: 28px 16px 24px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid #c0a16b;
+            border-radius: 4px 24px 4px 24px;
+            box-shadow: 6px 8px 14px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .guide-card::before {
+            content: "⛰️";
+            position: absolute;
+            top: -14px;
+            left: -10px;
+            font-size: 28px;
+            opacity: 0.25;
+            transform: rotate(-10deg);
+        }
+        .guide-card::after {
+            content: "🪨";
+            position: absolute;
+            bottom: -14px;
+            right: -10px;
+            font-size: 32px;
+            opacity: 0.2;
+            transform: rotate(5deg);
+        }
+        .guide-card:hover {
+            transform: translateY(-6px);
+            border-color: #8c5c2b;
+            box-shadow: 10px 14px 24px rgba(100,60,20,0.2);
+            background: #fff7ea;
+        }
+        .card-icon {
+            font-size: 52px;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.15));
+        }
+        .guide-card h3 {
+            font-size: 26px;
+            color: #5a3a1b;
+            margin-bottom: 10px;
+            font-family: '华文楷书', 'Times New Roman', serif;
+            letter-spacing: 4px;
+            border-bottom: 1px solid #e0c8a0;
+            display: inline-block;
+            padding-bottom: 4px;
+        }
+        .guide-card p {
+            font-size: 14px;
+            color: #6b4e2a;
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+            margin-top: 12px;
+        }
+        .explore-btn-wrapper {
+            text-align: center;
+            margin-top: 60px;
+        }
+        .explore-btn {
+            display: inline-block;
+            background: #8c5c2b;
+            color: #fff8e8;
+            font-size: 22px;
+            font-family: '华文楷书', 'Times New Roman', serif;
+            letter-spacing: 6px;
+            padding: 12px 32px;
+            border-radius: 60px;
+            text-decoration: none;
+            border: 1px solid #c0a16b;
+            box-shadow: 0 6px 0 #5a3a1b;
+            transition: all 0.2s ease;
+            background-image: linear-gradient(to bottom, #a0703a, #6e441e);
+        }
+        .explore-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 #5a3a1b;
+            background-image: linear-gradient(to bottom, #b8864b, #7a4f25);
+            color: #fff;
+        }
+        footer {
+            background-color: #8c5c2b;
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            color: white;
+            font-family: 楷体;
+            letter-spacing: 8px;
+            font-size: 26px;
+            border-radius: 4px;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        nav ul li {
+            margin: 0;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fef3e0;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 12px;
+            border: 1px solid #c09650;
+            overflow: hidden;
+            top: 100%;
+            left: 0;
+        }
+        .dropdown-content a {
+            color: #5a3a1b;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-size: 16px;
+            letter-spacing: 2px;
+            font-family: 楷体;
+        }
+        .dropdown-content a:hover {
+            background-color: #e0c8a0;
+            color: #3e2a1f;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        @media (max-width: 700px) {
+            .digital-human { bottom: 20px; left: 10px; }
+            .avatar { width: 120px; }
+            .speech-bubble { bottom: 150px; left: 10px; max-width: 220px; font-size: 14px; }
+            .wrapper { width: 90%; }
+            .hero h1 { font-size: 24px; }
+            .guide-cards { gap: 20px; }
+            .guide-card { width: 200px; }
+            .explore-btn { font-size: 16px; padding: 8px 20px; }
+            .ai-answer-box { width: 90%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top wrapper">
+        <a href="index.html"><img src="images/logo.png" alt="阴山文化logo"></a>
+        <div style="display: flex; align-items: center;">
+            <div class="search">
+                <input type="text" placeholder="请输入你想搜索的内容" id="searchInput">
+                <button id="searchBtn">搜索</button>
+            </div>
+            <div class="lang-switch">
+                <button class="lang-btn active" data-lang="zh">中文</button>
+                <button class="lang-btn" data-lang="en">English</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="aiAnswerBox" class="ai-answer-box"></div>
+
+    <nav class="wrapper">
+        <ul>
+            <li><a href="index.html" id="navHome">首页</a></li>
+            <li><a href="culture.html" id="navCulture">文化底蕴</a></li>
+            <li><a href="liu.html" id="navFolk">民俗文化</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" id="navMap">阴山地图 ▼</a>
+                <div class="dropdown-content">
+                    <a href="map.html" id="navGaode">🗺️ 高德地图</a>
+                    <a href="terrain.html" id="navTerrain">🏔️ 3D地形体验</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="banner">
+        <section>
+            <ul> 
+                <li><img src="images/banner1.jpg" alt="阴山山脉风光"></li>
+                <li><img src="images/banner2.png" alt="阴山岩画鹿群"></li>
+                <li><img src="images/banner3.png" alt="阴山岩画狩猎场景"></li>
+                <li><img src="images/banner4.png" alt="阴山文化遗址"></li>
+            </ul>
+        </section>
+    </div>
+
+    <div class="hero wrapper">
+        <h1 id="heroTitle">阴山 · 游牧与农耕的千年走廊</h1>
+        <p class="subtitle" id="heroSubtitle">万年岩画 | 多民族交融 | 活态民俗</p>
+        <div class="guide-cards">
+            <a href="culture.html" class="guide-card"><div class="card-icon">🏛️</div><h3 id="card1Title">文化底蕴</h3><p id="card1Desc">岩画 · 服饰 · 音乐 · 历史</p></a>
+            <a href="liu.html" class="guide-card"><div class="card-icon">🎪</div><h3 id="card2Title">民俗文化</h3><p id="card2Desc">祭敖包 · 婚礼 · 那达慕</p></a>
+            <a href="map.html" class="guide-card"><div class="card-icon">🗺️</div><h3 id="card3Title">阴山地图</h3><p id="card3Desc">岩画分布 · 长城遗址</p></a>
+        </div>
+        <div class="explore-btn-wrapper">
+            <a href="culture.html" class="explore-btn" id="exploreBtn">⛰️ 点击探索阴山 ⛰️</a>
+        </div>
+    </div>
+
+    <footer class="wrapper" id="footerText">阴山文化 · 守望文明交融</footer>
+
+    <div class="digital-human" id="digitalHuman">
+        <div class="avatar">
+            <img src="images/keai.png" alt="数字人">
+        </div>
+    </div>
+    <div id="speechBubble" class="speech-bubble">
+        <span class="close-bubble" id="closeBubble">✕</span>
+        <div id="bubbleText">赛白努！我是阴山小使者，带你了解草原文化～</div>
+    </div>
+
+    <script src="./js/js01.js"></script>
+    <script>
+        // ======================== 多语言文本库 ========================
+        const langText = {
+            zh: {
+                searchPlaceholder: "请输入你想搜索的内容",
+                navHome: "首页", navCulture: "文化底蕴", navFolk: "民俗文化",
+                navMap: "阴山地图 ▼", navGaode: "🗺️ 高德地图", navTerrain: "🏔️ 3D地形体验",
+                heroTitle: "阴山 · 游牧与农耕的千年走廊", heroSubtitle: "万年岩画 | 多民族交融 | 活态民俗",
+                card1Title: "文化底蕴", card1Desc: "岩画 · 服饰 · 音乐 · 历史",
+                card2Title: "民俗文化", card2Desc: "祭敖包 · 婚礼 · 那达慕",
+                card3Title: "阴山地图", card3Desc: "岩画分布 · 长城遗址",
+                exploreBtn: "⛰️ 点击探索阴山 ⛰️", footer: "阴山文化 · 守望文明交融",
+                greetings: [
+                    "🏔️ 赛白努！欢迎来到阴山文化世界～",
+                    "🐫 想了解祭敖包、那达慕吗？点击民俗文化页吧！",
+                    "🪨 阴山岩画有上万年历史，是不是很神奇？",
+                    "🍶 来尝尝草原的奶食文化，白色象征吉祥哦！",
+                    "🎵 听过马头琴的传说吗？凄美又动人。",
+                    "🏹 你知道“男儿三艺”是哪三样吗？",
+                    "📜 阴山是游牧与农耕的分界线，又是交融带。",
+                    "🔥 腊月二十三，蒙古族要祭火祈福～"
+                ]
+            },
+            en: {
+                searchPlaceholder: "Search...",
+                navHome: "Home", navCulture: "Cultural Heritage", navFolk: "Folk Culture",
+                navMap: "Yinshan Map ▼", navGaode: "🗺️ Amap", navTerrain: "🏔️ 3D Terrain",
+                heroTitle: "Yinshan · Millennial Corridor of Nomads & Farmers", heroSubtitle: "10,000-yr Rock Art | Ethnic Integration | Living Customs",
+                card1Title: "Cultural Heritage", card1Desc: "Rock Art · Costume · Music · History",
+                card2Title: "Folk Culture", card2Desc: "Ovoo Worship · Wedding · Naadam",
+                card3Title: "Yinshan Map", card3Desc: "Petroglyphs · Great Wall Sites",
+                exploreBtn: "⛰️ Explore Yinshan ⛰️", footer: "Yinshan Culture · Witness of Civilizations",
+                greetings: [
+                    "🏔️ Hello! Welcome to Yinshan Culture World～",
+                    "🐫 Interested in Ovoo worship or Naadam? Check Folk Culture page!",
+                    "🪨 Yinshan rock art has over 10,000 years of history. Amazing, right?",
+                    "🍶 Taste the dairy culture of the steppe; white symbolizes good luck!",
+                    "🎵 Have you heard the legend of the horse-head fiddle?",
+                    "🏹 Do you know the 'Three Arts of Men'?",
+                    "📜 Yinshan is both a dividing line and a melting pot of nomads and farmers.",
+                    "🔥 On the 23rd of the 12th lunar month, Mongolians worship fire for blessings～"
+                ]
+            }
+        };
+
+        let currentLang = 'zh';
+        let greetings = langText.zh.greetings;
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const texts = langText[lang];
+            document.getElementById('searchInput').placeholder = texts.searchPlaceholder;
+            document.getElementById('navHome').innerText = texts.navHome;
+            document.getElementById('navCulture').innerText = texts.navCulture;
+            document.getElementById('navFolk').innerText = texts.navFolk;
+            document.getElementById('navMap').innerText = texts.navMap;
+            document.getElementById('navGaode').innerText = texts.navGaode;
+            document.getElementById('navTerrain').innerText = texts.navTerrain;
+            document.getElementById('heroTitle').innerText = texts.heroTitle;
+            document.getElementById('heroSubtitle').innerText = texts.heroSubtitle;
+            document.getElementById('card1Title').innerText = texts.card1Title;
+            document.getElementById('card1Desc').innerText = texts.card1Desc;
+            document.getElementById('card2Title').innerText = texts.card2Title;
+            document.getElementById('card2Desc').innerText = texts.card2Desc;
+            document.getElementById('card3Title').innerText = texts.card3Title;
+            document.getElementById('card3Desc').innerText = texts.card3Desc;
+            document.getElementById('exploreBtn').innerHTML = texts.exploreBtn;
+            document.getElementById('footerText').innerText = texts.footer;
+            greetings = texts.greetings;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+        }
+
+        function showRandomGreeting() {
+            const randomIndex = Math.floor(Math.random() * greetings.length);
+            const msg = greetings[randomIndex];
+            const bubbleDiv = document.getElementById('bubbleText');
+            bubbleDiv.innerHTML = msg;
+            const bubble = document.getElementById('speechBubble');
+            bubble.style.display = 'block';
+            setTimeout(() => {
+                if (bubble) bubble.style.display = 'none';
+            }, 6000);
+        }
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
+        });
+
+        const digitalHuman = document.getElementById('digitalHuman');
+        const speechBubble = document.getElementById('speechBubble');
+        const closeBubble = document.getElementById('closeBubble');
+        digitalHuman.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showRandomGreeting();
+        });
+        closeBubble.addEventListener('click', (e) => {
+            e.stopPropagation();
+            speechBubble.style.display = 'none';
+        });
+        document.body.addEventListener('click', (e) => {
+            if (speechBubble.style.display === 'block' && !speechBubble.contains(e.target) && e.target !== digitalHuman) {
+                speechBubble.style.display = 'none';
+            }
+        });
+
+        // ======================== 本地知识库问答 ========================
+        const knowledgeBase = {
+            zh: [
+                { keywords: ["岩画", "岩画价值", "岩画历史", "岩画意义"], answer: "阴山岩画分布150余处，留存五万余幅，从旧石器时代延至元明。2006年列为全国重点文保单位，2012年列入世界文化遗产预备名录。题材涵盖狩猎、放牧、祭祀、星辰、战争等，是研究北方游牧民族历史艺术的宝库。" },
+                { keywords: ["那达慕", "男儿三艺", "摔跤", "赛马", "射箭"], answer: "那达慕是蒙古族传统体育竞技大会，包含摔跤、赛马、射箭，称为“男儿三艺”。2006年列入国家级非物质文化遗产，是阴山游牧文化活态传承的体现。" },
+                { keywords: ["祭敖包", "敖包"], answer: "祭敖包是蒙古族传统祭祀仪式，人们献上哈达、奶食、酒，绕行三圈祈求风调雨顺、人畜平安。" },
+                { keywords: ["婚礼", "蒙古族婚礼"], answer: "蒙古族婚礼仪式包括提亲、迎亲、拜火、敬酒等，新娘戴珊瑚头饰，新郎骑马迎亲，伴有祝颂词和民歌。" },
+                { keywords: ["奶食", "奶制品", "奶豆腐", "奶酪"], answer: "奶食文化是蒙古族饮食核心，包括鲜奶、酸奶、奶豆腐、奶酪等，白色象征吉祥，用于待客和祭祀。" },
+                { keywords: ["驼文化", "骆驼"], answer: "阴山以北的戈壁草原，骆驼是传统交通工具，驼毛擀毡、驼奶酿酒，冬季有骆驼赛跑等比赛。" },
+                { keywords: ["祭火", "祭火节"], answer: "农历腊月二十三或二十四，蒙古族举行祭火仪式，供奉羊胸骨、奶食，祈求家庭平安、牲畜兴旺。" },
+                { keywords: ["敬酒", "敬酒礼仪"], answer: "敬酒是蒙古族最高礼遇，客人用无名指蘸酒弹向天、地、火神，然后饮用，伴有祝酒歌。" },
+                { keywords: ["长城", "赵长城", "高阙塞", "鸡鹿塞"], answer: "阴山山脉是历代长城最密集地段，有战国赵长城、秦汉长城、高阙塞、鸡鹿塞等关隘。" },
+                { keywords: ["草原丝路", "丝绸之路", "参天可汗道"], answer: "唐代参天可汗道、元代木怜道穿过阴山，茶叶丝绸北上，马匹毛皮南下，是商贸枢纽。" },
+                { keywords: ["阴山文化", "阴山历史", "阴山特点"], answer: "阴山是游牧文明与农耕文明的分界线与交融带，拥有岩画、长城、丝路、民俗等丰富遗产。" },
+                { keywords: ["数字人", "语音", "说话"], answer: "点击左下角的小人，我会用甜美的声音为你介绍阴山文化哦～" }
+            ],
+            en: [
+                { keywords: ["rock art", "petroglyph", "rock art value"], answer: "Yinshan rock art has over 10,000 years, listed as national heritage in 2006 and tentative World Heritage in 2012. It depicts hunting, herding, rituals, stars, wars." },
+                { keywords: ["naadam", "three arts"], answer: "Naadam is a traditional Mongolian festival including wrestling, horse racing, archery, intangible cultural heritage." },
+                { keywords: ["ovoo", "worship"], answer: "Ovoo worship is a ceremony praying for good weather and peace, with offerings of milk and wine." },
+                { keywords: ["wedding", "mongolian wedding"], answer: "Mongolian wedding includes proposal, fire worship, toasting, and the bride wears coral headdress." },
+                { keywords: ["dairy", "milk tea", "cheese"], answer: "Dairy products like milk, yogurt, cheese are essential in Mongolian diet, symbolizing luck and hospitality." },
+                { keywords: ["camel culture"], answer: "Camels are used for transport, camel hair felt and camel milk wine are traditional crafts." },
+                { keywords: ["fire worship"], answer: "Fire worship is held on the 23rd of the 12th lunar month, offering sheep breastbone and dairy." },
+                { keywords: ["toasting"], answer: "Toasting is the highest courtesy; guests dip ring finger and flick to heaven, earth, and fire god." },
+                { keywords: ["great wall", "zhao great wall", "gaquesai"], answer: "The Yinshan Mountains have the most dense Great Wall sections, including Zhao Great Wall, Gaquesai pass." },
+                { keywords: ["silk road", "grassland silk road"], answer: "The grassland Silk Road passed through Yinshan, trading tea, silk, horses, and furs." }
+            ]
+        };
+
+        function localSearch(query, lang) {
+            const db = knowledgeBase[lang];
+            if (!db) return null;
+            const lowerQuery = query.toLowerCase();
+            for (let item of db) {
+                for (let kw of item.keywords) {
+                    if (lowerQuery.includes(kw.toLowerCase())) {
+                        return item.answer;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function getFallbackAnswer(lang) {
+            return lang === 'zh' 
+                ? "这个问题我还不太清楚，你可以去「文化底蕴」或「民俗文化」页面看看哦～或者换个关键词试试（例如“岩画”、“那达慕”）。"
+                : "Sorry, I don't know the answer. You may check 'Cultural Heritage' or 'Folk Culture' pages, or try different keywords like 'rock art'.";
+        }
+
+        const answerBox = document.getElementById('aiAnswerBox');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        function showAnswer(answer) {
+            answerBox.innerHTML = `<span>💬 ${answer}</span>`;
+            answerBox.style.display = 'block';
+            if (window.answerTimeout) clearTimeout(window.answerTimeout);
+            window.answerTimeout = setTimeout(() => {
+                answerBox.style.opacity = '0';
+                setTimeout(() => {
+                    answerBox.style.display = 'none';
+                    answerBox.style.opacity = '1';
+                }, 300);
+            }, 12000);
+        }
+
+        async function handleSearch() {
+            const query = searchInput.value.trim();
+            if (!query) return;
+            showAnswer('🤔 正在寻找答案...');
+            setTimeout(() => {
+                let answer = localSearch(query, currentLang);
+                if (!answer) answer = getFallbackAnswer(currentLang);
+                showAnswer(answer);
+            }, 100);
+        }
+
+        searchBtn.addEventListener('click', handleSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSearch();
+        });
+
+        setLanguage('zh');
+    </script>
+</body>
+</html>
