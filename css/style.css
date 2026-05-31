@@ -1,1 +1,615 @@
+/* 将所有元素的内边距和外边距都设置为 0，去除默认的文本装饰和列表样式，采用盒模型计算方式 */
+* {
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    list-style: none;
+    box-sizing: border-box;
+}
 
+/* 主体背景：使用自定义图片，并叠加阴山剪影水印 */
+html {
+    background: url('/images/beijing.png') no-repeat center center fixed;
+    background-size: cover;
+}
+body {
+    background: transparent !important;
+    position: relative;
+}
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" opacity="0.06"><path fill="%237a5a3a" d="M0,500 L100,420 L180,450 L280,360 L380,390 L480,320 L580,350 L680,290 L780,330 L880,270 L980,310 L1080,250 L1200,280 L1200,600 L0,600 Z"/><circle cx="200" cy="200" r="30" fill="none" stroke="%237a5a3a" stroke-width="4" opacity="0.8"/><path d="M850,150 L880,100 L910,150 Z" fill="%237a5a3a" opacity="0.6"/><path d="M950,180 L975,140 L1000,180 Z" fill="%237a5a3a" opacity="0.4"/><g transform="translate(600, 80) scale(0.6)"><path d="M0,0 L20,-40 L40,0 Z" fill="none" stroke="%237a5a3a" stroke-width="3"/><circle cx="20" cy="-50" r="6" fill="%237a5a3a"/></g></svg>');
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: 100% auto;
+    opacity: 0.2;
+    z-index: -1;
+}
+
+/* 定义一个类名为 wrapper 的样式，用于设置内容区域的宽度并使其水平居中 */
+.wrapper {
+    width: 1000px;
+    margin: 0 auto;
+}
+
+/* 定义顶部区域的样式，使用 flex 布局使其内容水平两端对齐并垂直居中 */
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 定义顶部区域图片的样式，设置图片的宽度和高度 */
+.top img {
+    width: 180px;
+    height: 80px;
+}
+
+/* 定义搜索框区域的样式，使用 flex 布局使其内容垂直居中，并添加边框 */
+.search {
+    display: flex;
+    align-items: center;
+    border: #c09650 2px solid;
+}
+
+/* 定义搜索框输入框的样式，设置内边距、去除边框和轮廓，并使其宽度自适应 */
+.search input {
+    padding: 8px;
+    border: none;
+    outline: none;
+    flex: 1;
+}
+
+/* 定义搜索框按钮的样式 */
+.search button {
+    padding: 7px 16px;
+    border: none;
+    background-color: #c09650;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* 导航栏 古朴棕色主题 */
+nav {
+    border-radius: 4px;
+    background-color: #8c5c2b;
+    padding: 10px 8px;
+    display: flex;
+    justify-content: space-around;
+}
+
+/* 导航栏链接 */
+nav a {
+    text-decoration: none;
+    color: #fff;
+    font-family: 楷体;
+    letter-spacing: 4px;
+    font-size: 24px;
+}
+
+/* 导航悬停 文字变金色 */
+nav a:hover {
+    color: #ffdf8e;
+}
+
+/* 轮播图区域 尺寸完全不变 */
+.banner {
+    width: 1300px;
+    height: 400px;
+    margin: 30px auto;
+}
+
+/* 轮播图样式部分 完全不变 */
+.banner section {
+    width: 1300px;
+    height: 400px;
+    margin: 0 auto;
+}
+
+.banner section>ul {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 4000px;
+}
+
+.banner section>ul>li {
+    width: 560px;
+    height: 360px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -300px;
+    margin-top: -180px;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.5s linear;
+    cursor: pointer;
+}
+
+.banner section>ul>li>img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+/* 标题样式 改为古朴棕色系 */
+.title {
+    text-align: center;
+    font-family: 楷体;
+    letter-spacing: 8px;
+    font-size: 24px;
+    line-height: 33px;
+    color: #fff;
+    background-color: #8c5c2b;
+    padding: 8px 8px 8px 18px;
+    border-radius: 4px 20px 4px 20px;
+}
+
+/* 信息区域 完全不变 */
+.info {
+    margin: 25px auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.info .text {
+    width: 75%;
+}
+
+/* 文本颜色改为古朴深色，不刺眼 */
+.info .text p {
+    margin-bottom: 10px;
+    text-indent: 2em;
+    line-height: 28px;
+    font-size: 18px;
+    color: #5a3a1b;
+}
+
+.info img {
+    width: 20%;
+}
+
+/* 图片列表 完全不变 */
+.imglists {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 60px;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+.imglist {
+    width: 22%;
+    height: 160px;
+    margin-bottom: 20px;
+}
+
+.imglist img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    transition: all 1s;
+}
+
+.imglist:hover img {
+    transform: translateY(-30px);
+}
+
+/* 文字颜色统一 */
+.imglist p {
+    text-align: center;
+    margin-top: 10px;
+    color: #8c5c2b;
+    font-size: 18px;
+    letter-spacing: 4px;
+}
+
+.make-items {
+    flex-wrap: wrap;
+    padding: 10px 20px 20px 20px;
+}
+
+.make-items .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 50px 0;
+    width: 100%;
+    background-color: #f7f3ec;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    transition: all 1s;
+}
+
+.make-items .item:hover {
+    transform: translateY(-20px);
+    box-shadow: 2px 3px 5px 3px #cbc4c4;
+}
+
+.make-items .item:nth-child(2n) {
+    flex-direction: row-reverse !important;
+}
+
+.make-items .item img {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 5px 5px 0 0;
+}
+
+.make-items .item h3 {
+    letter-spacing: 8px;
+    margin-left: 15px;
+    margin-right: 15px;
+    font-size: 26px;
+    color: #8c5c2b;
+}
+
+.make-items .item p {
+    margin: 10px 20px;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* 内容区域样式 */
+.history-content {
+    margin-bottom: 20px;
+}
+
+.history-content h4 {
+    color: #8c5c2b;
+    letter-spacing: 4px;
+    font-size: 20px;
+    margin: 18px 0 12px 10px;
+}
+
+.history-content p {
+    text-indent: 2em;
+    letter-spacing: 2px;
+    font-size: 18px;
+    color: #5a3a1b;
+}
+
+.video {
+    width: 800px;
+    height: 400px;
+    margin-top: 40px;
+    margin-bottom: 60px;
+    margin-left: 360px;
+    object-fit: cover;
+}
+
+.pais {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 8px 18px;
+}
+
+.pai {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    background-color: #f7f3ec;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    padding: 7px;
+    margin: 7px 7px 12px 7px;
+}
+
+.pai .pic {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+}
+
+.pai .pic img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    transition: all 1s;
+}
+
+.pai .pic:hover img {
+    transform: scale(1.1);
+}
+
+.pai-name {
+    font-size: 22px;
+    letter-spacing: 4px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #8c5c2b;
+}
+
+.pai-text {
+    text-indent: 2em;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: #666;
+    line-height: 1.6;
+    margin-top: 10px;
+    width: 250px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+.register {
+    width: 800px;
+    padding: 20px;
+    margin: 30px auto;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.register label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+.register input[type="text"],
+.register input[type="email"],
+.register input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.register label[for="age"] {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.register select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.register input[type="submit"] {
+    background-color: #8c5c2b;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.line a {
+    color: #8c5c2b;
+    font-size: 14px;
+}
+
+/* 页脚 古朴棕色 */
+footer {
+    background-color: #8c5c2b;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    color: white;
+    font-family: 楷体;
+    letter-spacing: 8px;
+    font-size: 26px;
+    border-radius: 4px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+nav ul li {
+    margin: 0;
+}
+
+/* ========== 首页英雄区域 - 古朴历史风格 ========== */
+.hero {
+    text-align: center;
+    margin: 40px auto 60px;
+    position: relative;
+    background: #fcf8f0;
+    border-top: 2px solid #c09650;
+    border-bottom: 2px solid #c09650;
+    padding: 30px 20px 50px;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.03), 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.hero h1 {
+    font-size: 38px;
+    letter-spacing: 8px;
+    color: #4a2c14;
+    font-family: 'Times New Roman', 楷体, '华文楷书', serif;
+    text-shadow: 2px 2px 0 rgba(160, 110, 60, 0.15);
+    margin-bottom: 15px;
+    display: inline-block;
+    padding: 0 20px;
+    background: rgba(252, 245, 235, 0.7);
+    border-radius: 60px;
+}
+
+.hero .subtitle {
+    font-size: 18px;
+    color: #8c5c2b;
+    letter-spacing: 6px;
+    font-family: 'Courier New', monospace;
+    border-top: 1px dashed #d0b080;
+    border-bottom: 1px dashed #d0b080;
+    display: inline-block;
+    padding: 6px 24px;
+    background: rgba(255, 248, 235, 0.6);
+}
+
+.guide-cards {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+    margin-top: 60px;
+}
+
+.guide-card {
+    background: #fef3e0;
+    width: 240px;
+    padding: 28px 16px 24px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid #c0a16b;
+    border-radius: 4px 24px 4px 24px;
+    box-shadow: 6px 8px 14px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* 模拟岩画风格的装饰小符号 */
+.guide-card::before {
+    content: "⛰️";
+    position: absolute;
+    top: -14px;
+    left: -10px;
+    font-size: 28px;
+    opacity: 0.25;
+    transform: rotate(-10deg);
+}
+
+.guide-card::after {
+    content: "🪨";
+    position: absolute;
+    bottom: -14px;
+    right: -10px;
+    font-size: 32px;
+    opacity: 0.2;
+    transform: rotate(5deg);
+}
+
+.guide-card:hover {
+    transform: translateY(-6px);
+    border-color: #8c5c2b;
+    box-shadow: 10px 14px 24px rgba(100, 60, 20, 0.2);
+    background: #fff7ea;
+}
+
+.card-icon {
+    font-size: 52px;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.15));
+}
+
+.guide-card h3 {
+    font-size: 26px;
+    color: #5a3a1b;
+    margin-bottom: 10px;
+    font-family: '华文楷书', 'Times New Roman', serif;
+    letter-spacing: 4px;
+    border-bottom: 1px solid #e0c8a0;
+    display: inline-block;
+    padding-bottom: 4px;
+}
+
+.guide-card p {
+    font-size: 14px;
+    color: #6b4e2a;
+    letter-spacing: 2px;
+    font-family: 'Courier New', monospace;
+    margin-top: 12px;
+}
+
+/* 首页探索按钮 */
+.explore-btn-wrapper {
+    text-align: center;
+    margin-top: 60px;
+}
+.explore-btn {
+    display: inline-block;
+    background: #8c5c2b;
+    color: #fff8e8;
+    font-size: 22px;
+    font-family: '华文楷书', 'Times New Roman', serif;
+    letter-spacing: 6px;
+    padding: 12px 32px;
+    border-radius: 60px;
+    text-decoration: none;
+    border: 1px solid #c0a16b;
+    box-shadow: 0 6px 0 #5a3a1b;
+    transition: all 0.2s ease;
+    position: relative;
+    background-image: linear-gradient(to bottom, #a0703a, #6e441e);
+}
+.explore-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 9px 0 #5a3a1b;
+    background-image: linear-gradient(to bottom, #b8864b, #7a4f25);
+    color: #fff;
+}
+.explore-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 3px 0 #5a3a1b;
+}
+
+/* 下拉菜单样式 */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdown .dropbtn {
+    cursor: pointer;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fef3e0;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 12px;
+    border: 1px solid #c09650;
+    overflow: hidden;
+    top: 100%;
+    left: 0;
+}
+.dropdown-content a {
+    color: #5a3a1b;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    font-size: 16px;
+    letter-spacing: 2px;
+    font-family: 楷体;
+}
+.dropdown-content a:hover {
+    background-color: #e0c8a0;
+    color: #3e2a1f;
+}
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+html {
+    background: url('https://i.ibb.co/hxdNFWLV/beijing.pngyinshan-culture/main/images/beijing.png') no-repeat center center fixed;
+    background-size: cover;
+}
