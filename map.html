@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>阴山文化 · 数字地图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: '楷体', 'Microsoft YaHei', serif;
+            background-color: #fef7e8;
+        }
+        /* 顶部导航与网站一致（简单复刻） */
+        .top {
+            width: 100%;
+            background: #fef7e8;
+            border-bottom: 1px solid #e0c8a0;
+        }
+        .wrapper {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .top .wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+        }
+        .top img {
+            height: 60px;
+        }
+        .search {
+            display: flex;
+            border: 1px solid #c09650;
+            border-radius: 30px;
+            overflow: hidden;
+            background: white;
+        }
+        .search input {
+            padding: 8px 12px;
+            border: none;
+            outline: none;
+            width: 200px;
+        }
+        .search button {
+            background: #c09650;
+            border: none;
+            padding: 8px 16px;
+            color: white;
+            cursor: pointer;
+        }
+        nav {
+            background-color: #8c5c2b;
+            padding: 10px 0;
+        }
+        nav ul {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            list-style: none;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            letter-spacing: 4px;
+            font-family: 楷体;
+        }
+        nav a:hover {
+            color: #ffdf8e;
+        }
+        .map-container {
+            width: 100%;
+            height: calc(100vh - 160px);
+            min-height: 500px;
+            margin: 20px 0 40px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border: 2px solid #c09650;
+        }
+        footer {
+            background-color: #8c5c2b;
+            text-align: center;
+            color: white;
+            font-family: 楷体;
+            letter-spacing: 4px;
+            font-size: 18px;
+            padding: 12px;
+            margin-top: 20px;
+        }
+        @media (max-width: 700px) {
+            nav ul { gap: 15px; }
+            nav a { font-size: 14px; letter-spacing: 2px; }
+            .top .wrapper { flex-direction: column; gap: 10px; }
+            .search input { width: 150px; }
+        }
+    </style>
+    <!-- 引入高德地图 JS API 2.0 -->
+    <script type="text/javascript">
+        window._AMapSecurityConfig = {
+            securityJsCode: '79663120cc93d0382e09001be8829641'  // 安全密钥
+        };
+    </script>
+    <script src="https://webapi.amap.com/maps?v=2.0&key=0aeed18938f489be94ac850d3eab1310"></script>
+    <!-- 引入 UI 组件库（可选，用于信息窗口美化） -->
+    <script src="https://webapi.amap.com/ui/1.1/main.js"></script>
+</head>
+<body>
+    <div class="top">
+        <div class="wrapper">
+            <a href="index.html" class="logo-text">阴山文化</a>
+            <div class="search">
+                <input type="text" placeholder="搜索地点...">
+                <button>搜索</button>
+            </div>
+        </div>
+    </div>
+    <nav class="wrapper">
+    <ul>
+        <li><a href="index.html">首页</a></li>
+        <li><a href="culture.html">文化底蕴</a></li>
+        <li><a href="liu.html">民俗文化</a></li>
+        <li class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn">阴山地图 ▼</a>
+            <div class="dropdown-content">
+                <a href="map.html">🗺️ 高德地图</a>
+                <a href="terrain.html">🏔️ 3D地形体验</a>
+            </div>
+        </li>
+    </ul>
+</nav>
+
+    <div class="wrapper">
+        <div class="map-container" id="container"></div>
+    </div>
+
+    <footer>
+        阴山文化 · 守望文明交融
+    </footer>
+
+    <script>
+        // 等待地图加载完成
+        let map = null;
+        let infoWindow = null;
+
+        // 阴山文化兴趣点数据 (经纬度 + 名称 + 描述)
+        const yinshanPOIs = [
+            {
+                name: '🏔️ 乌拉特中旗岩画群',
+                lng: 108.6,
+                lat: 41.6,
+                desc: '阴山岩画最密集区域之一，分布大量狩猎、放牧、天体图案，距今千年以上。'
+            },
+            {
+                name: '⛰️ 高阙塞遗址',
+                lng: 107.1,
+                lat: 41.4,
+                desc: '赵武灵王修筑的阴山长城重要关隘，汉代卫青曾出塞于此。'
+            },
+            {
+                name: '🏛️ 鸡鹿塞',
+                lng: 106.9,
+                lat: 40.9,
+                desc: '汉代通往塞北的著名关塞，昭君出塞曾途经此地。'
+            },
+            {
+                name: '🪨 阴山岩画（格尔敖包沟）',
+                lng: 107.5,
+                lat: 41.2,
+                desc: '保存完好的岩画点，有群鹿图、猎手与弓等。'
+            },
+            {
+                name: '📜 赵长城遗迹',
+                lng: 110.2,
+                lat: 40.8,
+                desc: '战国赵武灵王沿阴山修筑的早期长城，土石结构依稀可见。'
+            },
+            {
+                name: '🐫 草原丝路古道（阴山段）',
+                lng: 108.9,
+                lat: 41.0,
+                desc: '北魏至元代草原丝绸之路的重要通道，连接漠北与中原。'
+            },
+            {
+                name: '🏯 沃野镇遗址',
+                lng: 109.5,
+                lat: 40.9,
+                desc: '北魏六镇之一，北方边防重镇，见证了民族融合。'
+            }
+        ];
+
+        // 调整地图样式为古朴风格（自定义）
+        const mapStyle = [
+            { "featureType": "all", "elementType": "labels", "stylers": { "visibility": "on" } },
+            { "featureType": "land", "elementType": "geometry", "stylers": { "color": "#f7f2e0" } },
+            { "featureType": "water", "elementType": "geometry", "stylers": { "color": "#c9d7c3" } },
+            { "featureType": "green", "elementType": "geometry", "stylers": { "color": "#e0d4b5" } },
+            { "featureType": "building", "elementType": "geometry", "stylers": { "color": "#d9c8a5" } },
+            { "featureType": "road", "elementType": "geometry", "stylers": { "color": "#c9b68b" } },
+            { "featureType": "highway", "elementType": "geometry", "stylers": { "color": "#b89a6a" } }
+        ];
+
+        function initMap() {
+            map = new AMap.Map('container', {
+                zoom: 8,
+                center: [108.5, 41.2],   // 阴山山脉中部
+                viewMode: '3D',           // 开启3D视图
+                pitch: 45,               // 俯仰角
+                mapStyle: 'amap://styles/whitesmoke', // 先使用淡色底图，再自定义
+                showBuildingBlock: false,
+                showLabel: true
+            });
+            
+            // 设置自定义主题（结合古朴色）
+            map.setMapStyle('amap://styles/whitesmoke');
+            // 添加一个图层遮罩实现暖色叠加（通过自定义图层复杂，用简单方法：通过CSS滤镜会影响性能，不做了）
+            // 但我们可以在地图背景上加一层半透明棕色遮罩？不推荐，直接使用自定义样式对象：
+            // 高德2.0支持setCustomStyle，但需要配置style json，这里为了简单，使用官方提供的淡色风格即可。
+            // 为了让地图更有历史感，可以加载一个自定义图片图层（云图），这里不加赘述。
+            
+            // 添加标记和信息窗
+            infoWindow = new AMap.InfoWindow({
+                offset: new AMap.Pixel(0, -30),
+                autoMove: true
+            });
+            
+            // 遍历添加标记
+            yinshanPOIs.forEach(poi => {
+                const marker = new AMap.Marker({
+                    position: [poi.lng, poi.lat],
+                    title: poi.name,
+                    icon: new AMap.Icon({
+                        size: new AMap.Size(32, 32),
+                        image: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png',  // 使用默认图标，稍后换成古朴风格
+                        imageSize: new AMap.Size(32, 32)
+                    }),
+                    // 自定义偏移
+                    offset: new AMap.Pixel(-16, -32)
+                });
+                marker.setMap(map);
+                
+                // 信息窗内容
+                const content = `
+                    <div style="font-family: '楷体', 'Microsoft YaHei'; max-width: 260px; background: #fef3e0; border-left: 4px solid #8c5c2b; padding: 8px 12px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                        <h4 style="margin:0 0 5px; color:#5a3a1b;">${poi.name}</h4>
+                        <p style="margin:0; font-size:14px; color:#4a3a28; line-height:1.4;">${poi.desc}</p>
+                        <small style="color:#8c5c2b;">📍 阴山文化遗产</small>
+                    </div>
+                `;
+                marker.on('click', () => {
+                    infoWindow.setContent(content);
+                    infoWindow.open(map, [poi.lng, poi.lat]);
+                });
+            });
+            
+            // 添加一个简单的阴山范围多边形（示意）
+            const yinshanBoundary = [
+                [105.5, 42.0],
+                [112.0, 42.0],
+                [113.0, 40.5],
+                [106.0, 40.0],
+                [105.5, 42.0]
+            ];
+            const polygon = new AMap.Polygon({
+                path: yinshanBoundary,
+                strokeColor: '#c09650',
+                strokeWeight: 2,
+                fillColor: '#d4b48c',
+                fillOpacity: 0.15,
+                strokeStyle: 'dashed'
+            });
+            polygon.setMap(map);
+            
+            // 添加一个简单的图例说明（可选）
+            AMap.plugin(['AMap.ToolBar', 'AMap.Scale'], function() {
+                map.addControl(new AMap.ToolBar({ position: 'RT' }));
+                map.addControl(new AMap.Scale({ position: 'LB' }));
+            });
+            
+            // 搜索功能
+            const searchBtn = document.querySelector('.search button');
+            const searchInput = document.querySelector('.search input');
+            searchBtn.addEventListener('click', () => {
+                const keyword = searchInput.value.trim();
+                if (!keyword) return;
+                // 使用高德地点搜索
+                AMap.plugin(['AMap.PlaceSearch'], function() {
+                    const placeSearch = new AMap.PlaceSearch({
+                        map: map,
+                        pageSize: 1
+                    });
+                    placeSearch.search(keyword, (status, result) => {
+                        if (status === 'complete' && result.poiList.pois.length) {
+                            const poi = result.poiList.pois[0];
+                            map.setCenter([poi.location.lng, poi.location.lat]);
+                            new AMap.Marker({
+                                position: [poi.location.lng, poi.location.lat],
+                                map: map
+                            });
+                        } else {
+                            alert('未找到该地点，请尝试更准确的关键词');
+                        }
+                    });
+                });
+            });
+        }
+        
+        window.onload = initMap;
+    </script>
+</body>
+</html>
