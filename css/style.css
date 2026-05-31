@@ -613,3 +613,23 @@ html {
     background: url('https://i.ibb.co/hxdNFWLV/beijing.pngyinshan-culture/main/images/beijing.png') no-repeat center center fixed;
     background-size: cover;
 }
+.logo-text {
+    font-family: '华文楷书', '楷体', 'Times New Roman', serif;
+    font-size: 28px;
+    font-weight: bold;
+    color: #5a3a1b;
+    text-decoration: none;
+    letter-spacing: 6px;
+    background: linear-gradient(135deg, #8c5c2b, #c09650);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 2px 2px 2px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+.logo-text:hover {
+    background: linear-gradient(135deg, #b8864b, #e0b070);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
