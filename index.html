@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阴山文化 · 文明走廊</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* 数字人 & 气泡 & 语言切换样式 */
+        .digital-human {
+            position: fixed;
+            bottom: 120px;
+            left: 20px;
+            z-index: 300;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .digital-human:hover { transform: scale(1.05); }
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: #f0e0c0;
+            border-radius: 50%;
+            border: 3px solid #c09650;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            background-image: linear-gradient(145deg, #fff3e0, #f0d8b0);
+        }
+        .speech-bubble {
+            position: absolute;
+            bottom: 90px;
+            left: 20px;
+            background: #fffef5;
+            border: 2px solid #c09650;
+            border-radius: 24px 24px 8px 24px;
+            padding: 12px 18px;
+            max-width: 240px;
+            font-family: '楷体', 'Segoe UI', serif;
+            font-size: 16px;
+            color: #4a2e1a;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            backdrop-filter: blur(4px);
+            z-index: 310;
+            display: none;
+            animation: fadeInUp 0.2s ease;
+        }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 20px;
+            border-width: 12px 10px 0 10px;
+            border-style: solid;
+            border-color: #c09650 transparent transparent transparent;
+        }
+        .speech-bubble .close-bubble {
+            float: right;
+            font-size: 18px;
+            font-weight: bold;
+            margin-left: 12px;
+            cursor: pointer;
+            color: #8c5c2b;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .lang-switch {
+            margin-left: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .lang-btn {
+            background: transparent;
+            border: 1px solid #c09650;
+            padding: 4px 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            color: #8c5c2b;
+            transition: 0.2s;
+        }
+        .lang-btn.active {
+            background: #8c5c2b;
+            color: white;
+            border-color: #8c5c2b;
+        }
+        .lang-btn:hover {
+            background: #c09650;
+            color: white;
+        }
+        .ai-answer-box {
+            width: 1000px;
+            margin: 10px auto;
+            background: #fef3e0;
+            border-left: 4px solid #8c5c2b;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-family: '楷体', 'Segoe UI', serif;
+            color: #4a2e1a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: none;
+            transition: opacity 0.3s;
+        }
+        @media (max-width: 700px) {
+            .digital-human { bottom: 80px; left: 12px; }
+            .avatar { width: 60px; height: 60px; font-size: 36px; }
+            .speech-bubble { max-width: 200px; font-size: 14px; bottom: 70px; left: 12px; }
+            .speech-bubble::after { left: 12px; }
+            .ai-answer-box { width: 90%; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top wrapper">
+        <a href="index.html"><img src="images/logo.png" alt="阴山文化logo"></a>
+        <div style="display: flex; align-items: center;">
+            <div class="search">
+                <input type="text" placeholder="请输入你想搜索的内容" id="searchInput">
+                <button id="searchBtn">搜索</button>
+            </div>
+            <div class="lang-switch">
+                <button class="lang-btn active" data-lang="zh">中文</button>
+                <button class="lang-btn" data-lang="en">English</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="aiAnswerBox" class="ai-answer-box"></div>
+
+    <nav class="wrapper">
+        <ul>
+            <li><a href="index.html" id="navHome">首页</a></li>
+            <li><a href="culture.html" id="navCulture">文化底蕴</a></li>
+            <li><a href="liu.html" id="navFolk">民俗文化</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" id="navMap">阴山地图 ▼</a>
+                <div class="dropdown-content">
+                    <a href="map.html" id="navGaode">🗺️ 高德地图</a>
+                    <a href="terrain.html" id="navTerrain">🏔️ 3D地形体验</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="banner">
+        <section>
+            <ul> 
+                <li><img src="images/banner1.jpg" alt="阴山山脉风光"></li>
+                <li><img src="images/banner2.png" alt="阴山岩画鹿群"></li>
+                <li><img src="images/banner3.png" alt="阴山岩画狩猎场景"></li>
+                <li><img src="images/banner4.png" alt="阴山文化遗址"></li>
+            </ul>
+        </section>
+    </div>
+
+    <div class="hero wrapper">
+        <h1 id="heroTitle">阴山 · 游牧与农耕的千年走廊</h1>
+        <p class="subtitle" id="heroSubtitle">万年岩画 | 多民族交融 | 活态民俗</p>
+        <div class="guide-cards">
+            <a href="culture.html" class="guide-card"><div class="card-icon">🏛️</div><h3 id="card1Title">文化底蕴</h3><p id="card1Desc">岩画 · 服饰 · 音乐 · 历史</p></a>
+            <a href="liu.html" class="guide-card"><div class="card-icon">🎪</div><h3 id="card2Title">民俗文化</h3><p id="card2Desc">祭敖包 · 婚礼 · 那达慕</p></a>
+            <a href="map.html" class="guide-card"><div class="card-icon">🗺️</div><h3 id="card3Title">阴山地图</h3><p id="card3Desc">岩画分布 · 长城遗址</p></a>
+        </div>
+        <div class="explore-btn-wrapper">
+            <a href="culture.html" class="explore-btn" id="exploreBtn">⛰️ 点击探索阴山 ⛰️</a>
+        </div>
+    </div>
+
+    <footer class="wrapper" id="footerText">阴山文化 · 守望文明交融</footer>
+
+    <div class="digital-human" id="digitalHuman">
+        <div class="avatar">
+            <span>🧑‍🎨</span>
+        </div>
+    </div>
+    <div id="speechBubble" class="speech-bubble">
+        <span class="close-bubble" id="closeBubble">✕</span>
+        <div id="bubbleText">赛白努！我是阴山小使者，带你了解草原文化～</div>
+    </div>
+
+    <script src="./js/js01.js"></script>
+    <script>
+        // ======================== 多语言文本库 ========================
+        const langText = {
+            zh: {
+                searchPlaceholder: "请输入你想搜索的内容",
+                navHome: "首页", navCulture: "文化底蕴", navFolk: "民俗文化",
+                navMap: "阴山地图 ▼", navGaode: "🗺️ 高德地图", navTerrain: "🏔️ 3D地形体验",
+                heroTitle: "阴山 · 游牧与农耕的千年走廊", heroSubtitle: "万年岩画 | 多民族交融 | 活态民俗",
+                card1Title: "文化底蕴", card1Desc: "岩画 · 服饰 · 音乐 · 历史",
+                card2Title: "民俗文化", card2Desc: "祭敖包 · 婚礼 · 那达慕",
+                card3Title: "阴山地图", card3Desc: "岩画分布 · 长城遗址",
+                exploreBtn: "⛰️ 点击探索阴山 ⛰️", footer: "阴山文化 · 守望文明交融",
+                greetings: [
+                    "🏔️ 赛白努！欢迎来到阴山文化世界～",
+                    "🐫 想了解祭敖包、那达慕吗？点击民俗文化页吧！",
+                    "🪨 阴山岩画有上万年历史，是不是很神奇？",
+                    "🍶 来尝尝草原的奶食文化，白色象征吉祥哦！",
+                    "🎵 听过马头琴的传说吗？凄美又动人。",
+                    "🏹 你知道“男儿三艺”是哪三样吗？",
+                    "📜 阴山是游牧与农耕的分界线，又是交融带。",
+                    "🔥 腊月二十三，蒙古族要祭火祈福～"
+                ]
+            },
+            en: {
+                searchPlaceholder: "Search...",
+                navHome: "Home", navCulture: "Cultural Heritage", navFolk: "Folk Culture",
+                navMap: "Yinshan Map ▼", navGaode: "🗺️ Amap", navTerrain: "🏔️ 3D Terrain",
+                heroTitle: "Yinshan · Millennial Corridor of Nomads & Farmers", heroSubtitle: "10,000-yr Rock Art | Ethnic Integration | Living Customs",
+                card1Title: "Cultural Heritage", card1Desc: "Rock Art · Costume · Music · History",
+                card2Title: "Folk Culture", card2Desc: "Ovoo Worship · Wedding · Naadam",
+                card3Title: "Yinshan Map", card3Desc: "Petroglyphs · Great Wall Sites",
+                exploreBtn: "⛰️ Explore Yinshan ⛰️", footer: "Yinshan Culture · Witness of Civilizations",
+                greetings: [
+                    "🏔️ Hello! Welcome to Yinshan Culture World～",
+                    "🐫 Interested in Ovoo worship or Naadam? Check Folk Culture page!",
+                    "🪨 Yinshan rock art has over 10,000 years of history. Amazing, right?",
+                    "🍶 Taste the dairy culture of the steppe; white symbolizes good luck!",
+                    "🎵 Have you heard the legend of the horse-head fiddle?",
+                    "🏹 Do you know the 'Three Arts of Men'?",
+                    "📜 Yinshan is both a dividing line and a melting pot of nomads and farmers.",
+                    "🔥 On the 23rd of the 12th lunar month, Mongolians worship fire for blessings～"
+                ]
+            }
+        };
+
+        let currentLang = 'zh';
+        let greetings = langText.zh.greetings;
+        let speechSynth = window.speechSynthesis;
+        let preferredVoice = null;
+
+        function selectNaturalVoice(langCode) {
+            return new Promise((resolve) => {
+                if (!speechSynth) return resolve(null);
+                let voices = speechSynth.getVoices();
+                if (voices.length === 0) {
+                    speechSynth.addEventListener('voiceschanged', () => {
+                        voices = speechSynth.getVoices();
+                        resolve(pickBestVoice(voices, langCode));
+                    }, { once: true });
+                } else {
+                    resolve(pickBestVoice(voices, langCode));
+                }
+            });
+        }
+
+        function pickBestVoice(voices, langCode) {
+            const langPrefix = langCode === 'zh' ? 'zh' : 'en';
+            let candidates = voices.filter(v => v.lang.startsWith(langPrefix));
+            let best = null;
+            const priorityList = [
+                /google.*female/i, /google.*uk/i,
+                /microsoft.*xiaoxiao/i, /microsoft.*zira/i, /microsoft.*女/i,
+                /samantha/i, /female/i, /woman/i
+            ];
+            for (let pattern of priorityList) {
+                best = candidates.find(v => pattern.test(v.name) || pattern.test(v.voiceURI));
+                if (best) break;
+            }
+            if (!best && candidates.length) best = candidates[0];
+            return best;
+        }
+
+        async function speakText(text, lang) {
+            if (!speechSynth) return;
+            speechSynth.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
+            utterance.rate = 0.9;
+            utterance.pitch = 1.2;
+            utterance.volume = 1;
+            if (!preferredVoice) {
+                preferredVoice = await selectNaturalVoice(lang);
+            }
+            if (preferredVoice && preferredVoice.lang.startsWith(lang === 'zh' ? 'zh' : 'en')) {
+                utterance.voice = preferredVoice;
+            }
+            speechSynth.speak(utterance);
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const texts = langText[lang];
+            document.getElementById('searchInput').placeholder = texts.searchPlaceholder;
+            document.getElementById('navHome').innerText = texts.navHome;
+            document.getElementById('navCulture').innerText = texts.navCulture;
+            document.getElementById('navFolk').innerText = texts.navFolk;
+            document.getElementById('navMap').innerText = texts.navMap;
+            document.getElementById('navGaode').innerText = texts.navGaode;
+            document.getElementById('navTerrain').innerText = texts.navTerrain;
+            document.getElementById('heroTitle').innerText = texts.heroTitle;
+            document.getElementById('heroSubtitle').innerText = texts.heroSubtitle;
+            document.getElementById('card1Title').innerText = texts.card1Title;
+            document.getElementById('card1Desc').innerText = texts.card1Desc;
+            document.getElementById('card2Title').innerText = texts.card2Title;
+            document.getElementById('card2Desc').innerText = texts.card2Desc;
+            document.getElementById('card3Title').innerText = texts.card3Title;
+            document.getElementById('card3Desc').innerText = texts.card3Desc;
+            document.getElementById('exploreBtn').innerHTML = texts.exploreBtn;
+            document.getElementById('footerText').innerText = texts.footer;
+            greetings = texts.greetings;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            selectNaturalVoice(lang).then(voice => { preferredVoice = voice; });
+        }
+
+        function showRandomGreeting() {
+            const randomIndex = Math.floor(Math.random() * greetings.length);
+            const msg = greetings[randomIndex];
+            const bubbleDiv = document.getElementById('bubbleText');
+            bubbleDiv.innerHTML = msg;
+            const bubble = document.getElementById('speechBubble');
+            bubble.style.display = 'block';
+            const cleanMsg = msg.replace(/[🏔️🐫🪨🍶🎵🏹📜🔥]/g, '');
+            speakText(cleanMsg, currentLang);
+            setTimeout(() => {
+                if (bubble) bubble.style.display = 'none';
+            }, 6000);
+        }
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
+        });
+
+        const digitalHuman = document.getElementById('digitalHuman');
+        const speechBubble = document.getElementById('speechBubble');
+        const closeBubble = document.getElementById('closeBubble');
+        digitalHuman.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showRandomGreeting();
+        });
+        closeBubble.addEventListener('click', (e) => {
+            e.stopPropagation();
+            speechBubble.style.display = 'none';
+            speechSynth.cancel();
+        });
+        document.body.addEventListener('click', (e) => {
+            if (speechBubble.style.display === 'block' && !speechBubble.contains(e.target) && e.target !== digitalHuman) {
+                speechBubble.style.display = 'none';
+                speechSynth.cancel();
+            }
+        });
+
+        // ======================== 本地知识库问答（无需 API）====================
+        const knowledgeBase = {
+            zh: [
+                { keywords: ["岩画", "岩画价值", "岩画历史", "岩画意义"], answer: "阴山岩画分布150余处，留存五万余幅，从旧石器时代延至元明。2006年列为全国重点文保单位，2012年列入世界文化遗产预备名录。题材涵盖狩猎、放牧、祭祀、星辰、战争等，是研究北方游牧民族历史艺术的宝库。" },
+                { keywords: ["那达慕", "男儿三艺", "摔跤", "赛马", "射箭"], answer: "那达慕是蒙古族传统体育竞技大会，包含摔跤、赛马、射箭，称为“男儿三艺”。2006年列入国家级非物质文化遗产，是阴山游牧文化活态传承的体现。" },
+                { keywords: ["祭敖包", "敖包"], answer: "祭敖包是蒙古族传统祭祀仪式，人们献上哈达、奶食、酒，绕行三圈祈求风调雨顺、人畜平安。" },
+                { keywords: ["婚礼", "蒙古族婚礼"], answer: "蒙古族婚礼仪式包括提亲、迎亲、拜火、敬酒等，新娘戴珊瑚头饰，新郎骑马迎亲，伴有祝颂词和民歌。" },
+                { keywords: ["奶食", "奶制品", "奶豆腐", "奶酪"], answer: "奶食文化是蒙古族饮食核心，包括鲜奶、酸奶、奶豆腐、奶酪等，白色象征吉祥，用于待客和祭祀。" },
+                { keywords: ["驼文化", "骆驼"], answer: "阴山以北的戈壁草原，骆驼是传统交通工具，驼毛擀毡、驼奶酿酒，冬季有骆驼赛跑等比赛。" },
+                { keywords: ["祭火", "祭火节"], answer: "农历腊月二十三或二十四，蒙古族举行祭火仪式，供奉羊胸骨、奶食，祈求家庭平安、牲畜兴旺。" },
+                { keywords: ["敬酒", "敬酒礼仪"], answer: "敬酒是蒙古族最高礼遇，客人用无名指蘸酒弹向天、地、火神，然后饮用，伴有祝酒歌。" },
+                { keywords: ["长城", "赵长城", "高阙塞", "鸡鹿塞"], answer: "阴山山脉是历代长城最密集地段，有战国赵长城、秦汉长城、高阙塞、鸡鹿塞等关隘。" },
+                { keywords: ["草原丝路", "丝绸之路", "参天可汗道"], answer: "唐代参天可汗道、元代木怜道穿过阴山，茶叶丝绸北上，马匹毛皮南下，是商贸枢纽。" },
+                { keywords: ["阴山文化", "阴山历史", "阴山特点"], answer: "阴山是游牧文明与农耕文明的分界线与交融带，拥有岩画、长城、丝路、民俗等丰富遗产。" },
+                { keywords: ["数字人", "语音", "说话"], answer: "点击左下角的小人，我会用甜美的声音为你介绍阴山文化哦～" }
+            ],
+            en: [
+                { keywords: ["rock art", "petroglyph", "rock art value"], answer: "Yinshan rock art has over 10,000 years, listed as national heritage in 2006 and tentative World Heritage in 2012. It depicts hunting, herding, rituals, stars, wars." },
+                { keywords: ["naadam", "three arts"], answer: "Naadam is a traditional Mongolian festival including wrestling, horse racing, archery, intangible cultural heritage." },
+                { keywords: ["ovoo", "worship"], answer: "Ovoo worship is a ceremony praying for good weather and peace, with offerings of milk and wine." },
+                { keywords: ["wedding", "mongolian wedding"], answer: "Mongolian wedding includes proposal, fire worship, toasting, and the bride wears coral headdress." },
+                { keywords: ["dairy", "milk tea", "cheese"], answer: "Dairy products like milk, yogurt, cheese are essential in Mongolian diet, symbolizing luck and hospitality." },
+                { keywords: ["camel culture"], answer: "Camels are used for transport, camel hair felt and camel milk wine are traditional crafts." },
+                { keywords: ["fire worship"], answer: "Fire worship is held on the 23rd of the 12th lunar month, offering sheep breastbone and dairy." },
+                { keywords: ["toasting"], answer: "Toasting is the highest courtesy; guests dip ring finger and flick to heaven, earth, and fire god." },
+                { keywords: ["great wall", "zhao great wall", "gaquesai"], answer: "The Yinshan Mountains have the most dense Great Wall sections, including Zhao Great Wall, Gaquesai pass." },
+                { keywords: ["silk road", "grassland silk road"], answer: "The grassland Silk Road passed through Yinshan, trading tea, silk, horses, and furs." }
+            ]
+        };
+
+        function localSearch(query, lang) {
+            const db = knowledgeBase[lang];
+            if (!db) return null;
+            const lowerQuery = query.toLowerCase();
+            for (let item of db) {
+                for (let kw of item.keywords) {
+                    if (lowerQuery.includes(kw.toLowerCase())) {
+                        return item.answer;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function getFallbackAnswer(lang) {
+            return lang === 'zh' 
+                ? "这个问题我还不太清楚，你可以去「文化底蕴」或「民俗文化」页面看看哦～或者换个关键词试试（例如“岩画”、“那达慕”）。"
+                : "Sorry, I don't know the answer. You may check 'Cultural Heritage' or 'Folk Culture' pages, or try different keywords like 'rock art'.";
+        }
+
+        const answerBox = document.getElementById('aiAnswerBox');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        function showAnswer(answer) {
+            answerBox.innerHTML = `<span>💬 ${answer}</span>`;
+            answerBox.style.display = 'block';
+            if (window.answerTimeout) clearTimeout(window.answerTimeout);
+            window.answerTimeout = setTimeout(() => {
+                answerBox.style.opacity = '0';
+                setTimeout(() => {
+                    answerBox.style.display = 'none';
+                    answerBox.style.opacity = '1';
+                }, 300);
+            }, 12000);
+        }
+
+        async function handleSearch() {
+            const query = searchInput.value.trim();
+            if (!query) return;
+            showAnswer('🤔 正在寻找答案...');
+            setTimeout(() => {
+                let answer = localSearch(query, currentLang);
+                if (!answer) answer = getFallbackAnswer(currentLang);
+                showAnswer(answer);
+            }, 100);
+        }
+
+        searchBtn.addEventListener('click', handleSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSearch();
+        });
+
+        // 初始化
+        (async () => {
+            preferredVoice = await selectNaturalVoice('zh');
+            setLanguage('zh');
+        })();
+    </script>
+</body>
+</html>
